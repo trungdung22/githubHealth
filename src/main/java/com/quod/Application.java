@@ -12,9 +12,11 @@ import com.quod.postprocess.Event;
 import com.quod.postprocess.HealthMetric;
 import com.quod.postprocess.MappingUtility;
 import com.quod.postprocess.Repo;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+/**
+ * Main Class application
+ */
 public class Application {
     // Method to encode a string value using `UTF-8` encoding scheme
     private static String encodeValue(String value) {

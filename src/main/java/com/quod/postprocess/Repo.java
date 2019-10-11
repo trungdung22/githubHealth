@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Main Class for reposition model
+ */
 public class Repo {
     private String repoId;
 
@@ -42,11 +45,17 @@ public class Repo {
 
     private List<Event> otherEventList;
 
+    //commit push score
     private float commitScore = 0f;
+    //number of project contributor score
     private float contributorScore = 0f;
+    // average issue open duration score
     private float issueDurScore = 0f;
+    // request pull duration score
     private float pullEvenDurScore = 0f;
+    // average commit per date score
     private float averageCommPerDayScore = 0f;
+    // ration commit per dev score
     private float ratioCommScore = 0f;
     private float totalScore = 0f;
 

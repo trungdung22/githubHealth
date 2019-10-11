@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.List;
 
+/**
+ * Main Class utility for I/O files
+ */
 public class FileWriterUtils {
     static private String PATH = "./data/";
 
@@ -19,7 +22,7 @@ public class FileWriterUtils {
             // use directory.mkdirs(); here instead.
         }
 
-        try (PrintWriter writer = new PrintWriter(new File(PATH + "test.csv"))) {
+        try (PrintWriter writer = new PrintWriter(new File(PATH + "data.csv"))) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("index,");
@@ -32,6 +35,8 @@ public class FileWriterUtils {
             sb.append("pullRequestMergeScore");
             sb.append(',');
             sb.append("commitRatioScore");
+            sb.append(',');
+            sb.append("averageCommitPerDayScore");
             sb.append(',');
             sb.append("totalScore");
             sb.append('\n');
@@ -48,6 +53,8 @@ public class FileWriterUtils {
                 sb.append(repo.getPullEvenDurScore());
                 sb.append(',');
                 sb.append(repo.getRatioCommScore());
+                sb.append(',');
+                sb.append(repo.getAverageCommPerDayScore());
                 sb.append(',');
                 sb.append(repo.getTotalScore());
                 sb.append('\n');

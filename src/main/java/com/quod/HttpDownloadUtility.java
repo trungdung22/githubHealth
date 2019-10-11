@@ -17,7 +17,6 @@ import com.quod.postprocess.Event;
 import com.quod.postprocess.MappingUtility;
 import org.apache.commons.text.StringSubstitutor;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -53,7 +52,7 @@ public class HttpDownloadUtility {
             dateCount+=1;
             for (Integer hour : hours) {
                 if (dateCount > dates.size() - 1){
-                    if (hour >= toHour){
+                    if (hour > toHour){
                         break;
                     }
                 }
@@ -100,13 +99,24 @@ public class HttpDownloadUtility {
             InputStream inputStream = new GZIPInputStream(con.getInputStream());
             Reader reader = new InputStreamReader(inputStream, "UTF-8");
             BufferedReader buffered  = new BufferedReader(reader);
-            StringBuilder rawMetaList = new StringBuilder();
-
             try {
                 String inputLine;
                 // read data and put into structure set
                 while ((inputLine = buffered.readLine()) != null) {
-                    rawMetaList.append(inputLine.toString());
+                    JSONParser parser = new JSONParser();
+                    JSONObject jsonObject = (JSONObject) parser.parse(inputLine.toString());
+                    Event event = MappingUtility.jsonToEvent(jsonObject);
+                    if (event != null){
+                        JSONObject jsonRepo = (JSONObject) jsonObject.get("repo");
+                        String repoId = jsonRepo.get("id").toString();
+                        List<Event> eventList = new ArrayList<>();
+
+                        if (metaMap.containsKey(repoId)){
+                            eventList = metaMap.get(repoId);
+                        }
+                        eventList.add(event);
+                        metaMap.put(repoId, eventList);
+                    }
                 }
 
             } catch (FileNotFoundException ex) {
@@ -122,24 +132,6 @@ public class HttpDownloadUtility {
                     con.disconnect();
                 } catch (IOException ex) {
                     Logger.getLogger(HttpDownloadUtility.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
-            JSONParser parser = new JSONParser();
-            JSONArray arrJson = (JSONArray) parser.parse("[" + rawMetaList.toString() + "]");
-            for (Object json : arrJson){
-                JSONObject jsonObject = (JSONObject) json;
-                Event event = MappingUtility.jsonToEvent(jsonObject);
-                if (event != null){
-                    JSONObject jsonRepo = (JSONObject) jsonObject.get("repo");
-                    String repoId = jsonRepo.get("id").toString();
-                    List<Event> eventList = new ArrayList<>();
-
-                    if (metaMap.containsKey(repoId)){
-                        eventList = metaMap.get(repoId);
-                    }
-                    eventList.add(event);
-                    metaMap.put(repoId, eventList);
                 }
             }
         }

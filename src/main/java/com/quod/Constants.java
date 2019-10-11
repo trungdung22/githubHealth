@@ -1,5 +1,8 @@
 package com.quod;
 
+/**
+ * Main Class utility for contants
+ */
 public class Constants {
 
     public static String CREATE_EVENT_TYPE = "CreateEvent";
