@@ -21,7 +21,7 @@ Max Health round from 0 to 1 based on:
 ;C:\Users\Dung Do\.m2\repository\org\apache\commons\commons-collections4\4.0\commons-collections4-4.0.jar" 
 com.quod.Application 2019-09-01T01:00:00Z 2019-09-10T04:00:00Z
 
-## Dependencies
+## Main Dependencies
  - apache commons-lang : use for data manipulation etc: String, number, date, collections etc. 
  - json-simple: use for parsing string to json objects. 
  - java-net lib: lib support for http request, streaming and memory buffer. 

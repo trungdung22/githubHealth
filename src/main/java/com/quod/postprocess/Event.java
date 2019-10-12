@@ -23,13 +23,17 @@ public class Event {
 
     private String repoName;
 
+    private String repoId;
+
     public Event(String evenId, String actorAccount, String actorId, Boolean isPublic,
-                 String evenType, String evenStatus, Date createTime, Date updateTime, Date closeTime) {
+                 String evenType, String evenStatus, String repoName, String repoId, Date createTime, Date updateTime, Date closeTime) {
         this.evenId = evenId;
         this.actorAccount = actorAccount;
         this.actorId = actorId;
         this.isPublic = isPublic;
         this.evenType = evenType;
+        this.repoName = repoName;
+        this.repoId = repoId;
         this.evenStatus = evenStatus;
         this.createTime = createTime;
         this.updateTime = updateTime;
@@ -114,5 +118,13 @@ public class Event {
 
     public void setRepoName(String repoName) {
         this.repoName = repoName;
+    }
+
+    public String getRepoId() {
+        return this.repoId;
+    }
+
+    public void setRepoId(String repoId) {
+        this.repoId = repoId;
     }
 }

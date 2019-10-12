@@ -48,6 +48,11 @@ public class MappingUtility {
         return Math.abs(timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS));
     }
 
+    /**
+     * Maping objct json to event model
+     * @param jsonObject
+     * @return
+     */
     public static Event jsonToEvent(JSONObject jsonObject) {
         try {
             String eventId = jsonObject.get("id").toString();
@@ -64,31 +69,34 @@ public class MappingUtility {
             if (Constants.ISSUE_EVENT_TYPE.equalsIgnoreCase(eventType)) {
                 JSONObject payload = (JSONObject) jsonObject.get("payload");
                 JSONObject issue = (JSONObject) payload.get("issue");
-                createTime = MappingUtility.strToDate(issue.get("created_at").toString());
-                closeTime = MappingUtility.strToDate(issue.get("closed_at").toString());
                 evenStatus = issue.get("state").toString();
+                createTime = MappingUtility.strToDate(issue.get("created_at").toString());
+                if ("closed".equalsIgnoreCase(evenStatus)) {
+                    closeTime = MappingUtility.strToDate(issue.get("closed_at").toString());
+                }
             } else if (Constants.PULL_REQUEST_EVENT_TYPE.equalsIgnoreCase(eventType)) {
 
                 JSONObject payload = (JSONObject) jsonObject.get("payload");
                 JSONObject pullRequest = (JSONObject) payload.get("pull_request");
                 evenStatus = pullRequest.get("state").toString();
                 createTime = MappingUtility.strToDate(pullRequest.get("created_at").toString());
-                closeTime = MappingUtility.strToDate(pullRequest.get("closed_at").toString());
+                if ("closed".equalsIgnoreCase(evenStatus)) {
+                    closeTime = MappingUtility.strToDate(pullRequest.get("closed_at").toString());
+                }
             }
 
-            String name = null;
-            if (name == null) {
-                JSONObject repoObj = (JSONObject) jsonObject.get("repo");
-                name = repoObj.get("name").toString();
-            }
+
+            JSONObject repoObj = (JSONObject) jsonObject.get("repo");
+            String repoName  = repoObj.get("name").toString();
+            String repoId = repoObj.get("id").toString();
 
             Event even = new Event(eventId, actorAcc, actorId, isPublic,
-                    eventType, evenStatus, createTime, updateTime, closeTime);
-            even.setRepoName(name);
+                    eventType, evenStatus, repoName, repoId, createTime, updateTime, closeTime);
+
             return even;
         } catch (Exception ex) {
             ex.getStackTrace();
-            return  null;
+            return null;
         }
     }
 

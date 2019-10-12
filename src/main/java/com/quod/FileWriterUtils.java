@@ -41,6 +41,7 @@ public class FileWriterUtils {
             sb.append("totalScore");
             sb.append('\n');
             Integer count = 1;
+
             for (Repo repo : repoList.subList(0, 1000)){
                 sb.append(count.toString());
                 sb.append(',');
