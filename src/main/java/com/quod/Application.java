@@ -5,12 +5,17 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.quod.postprocess.Event;
+import com.quod.dao.FileWriterUtils;
+import com.quod.downloader.HttpDownloadUtility;
+import com.quod.dao.Event;
 import com.quod.postprocess.HealthMetric;
-import com.quod.postprocess.MappingUtility;
-import com.quod.postprocess.Repo;
+import com.quod.mappingUtils.MappingUtility;
+import com.quod.dao.Repo;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * Main Class application
@@ -25,7 +30,7 @@ public class Application {
         }
     }
 
-    public static String decodeValue(String value) {
+    private static String decodeValue(String value) {
         try {
             return URLDecoder.decode(value, StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException ex) {
@@ -33,7 +38,7 @@ public class Application {
         }
     }
 
-    private static Map<String, Integer> parseParam(String paramStr) {
+    private static Map<String, Integer> parseCMDParam(String paramStr) {
         Map<String, Integer> map = new HashMap<>();
 
         String dateStr = paramStr.split("T")[0].split("-")[2];
@@ -44,20 +49,37 @@ public class Application {
         return map;
     }
 
-    public static void main(String args[]) {
-        String firstArg = args[0];
-        String seconArg = args[1];
+    /**
+     * list event to hashmap
+     *
+     * @param eventList list of repo event data
+     * @return hashmap meta data
+     */
+    private static Map<String, List<Event>> map(List<Event> eventList) {
+        Map<String, List<Event>> metaMap = new HashMap<>();
+        if (!CollectionUtils.isEmpty(eventList)) {
+            try {
+                for (Event event : eventList) {
+                    String repoId = event.getRepoId();
+                    List<Event> eventSubList = new ArrayList<>();
 
-        Map<String, Integer> fromMap = parseParam(firstArg);
-        Map<String, Integer> toMap = parseParam(seconArg);
-        String baseUrl = "https://data.gharchive.org/";
-        String yearStr = firstArg.split("T")[0].split("-")[0];
-        String monStr = firstArg.split("T")[0].split("-")[1];
-        String url = yearStr + "-" + monStr  + "-{date}-{time}.json.gz";
+                    if (metaMap.containsKey(repoId)) {
+                        eventSubList = metaMap.get(repoId);
+                    }
+                    eventSubList.add(event);
+                    metaMap.put(repoId, eventSubList);
+                }
+            } catch (NullPointerException ex) {
+                Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return metaMap;
+    }
 
-        Map<String, List<Event>> metaMap = HttpDownloadUtility.downloadFile(baseUrl + decodeValue(url),
-                fromMap.get("date"), toMap.get("date"), fromMap.get("hour"), toMap.get("hour"),
-                Constants.MULTITHREAD_DOWNLOAD_OPTIONS);
+    private static List<Repo> mappingEventToRepo(List<Event> eventList){
+        //Read JSON response and print
+        Map<String, List<Event>> metaMap = map(eventList);
+
         List<Repo> repoList = new ArrayList<>();
 
         for (Map.Entry<String, List<Event>> entry : metaMap.entrySet()) {
@@ -67,8 +89,28 @@ public class Application {
             Repo repo = MappingUtility.jsonToRepository(jsonObjectList, repoId);
             repoList.add(repo);
         }
+        return repoList;
+    }
+
+    public static void main(String args[]) {
+        String firstArg = args[0];
+        String seconArg = args[1];
+
+        Map<String, Integer> fromMap = parseCMDParam(firstArg);
+        Map<String, Integer> toMap = parseCMDParam(seconArg);
+        String baseUrl = "https://data.gharchive.org/";
+        String yearStr = firstArg.split("T")[0].split("-")[0];
+        String monStr = firstArg.split("T")[0].split("-")[1];
+        String url = yearStr + "-" + monStr  + "-{date}-{time}.json.gz";
+
+        List<Event> eventList = HttpDownloadUtility.processData(baseUrl + decodeValue(url),
+                fromMap.get("date"), toMap.get("date"), fromMap.get("hour"), toMap.get("hour"),
+                Constants.MULTITHREAD_DOWNLOAD_OPTIONS);
+
+        List<Repo> repoList = mappingEventToRepo(eventList);
 
         HealthMetric.computeMetric(repoList);
+
         List<Repo> sortedList = repoList.stream()
                 .sorted(Comparator.comparingDouble(Repo::getTotalScore).reversed())
                 .collect(Collectors.toList());

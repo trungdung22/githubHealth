@@ -1,5 +1,7 @@
-package com.quod.postprocess;
+package com.quod.mappingUtils;
 
+import com.quod.dao.Event;
+import com.quod.dao.Repo;
 import org.json.simple.JSONObject;
 import com.quod.Constants;
 
@@ -12,6 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Mapping Utility class
+ */
 public class MappingUtility {
 
     /**

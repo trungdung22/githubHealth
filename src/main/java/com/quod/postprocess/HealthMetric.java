@@ -1,5 +1,7 @@
 package com.quod.postprocess;
 
+import com.quod.dao.Repo;
+
 import java.util.List;
 
 public class HealthMetric {
@@ -48,7 +50,7 @@ public class HealthMetric {
             }
         }
 
-        processHealthMetric(repoList, maxNumCommits, maxNumContributors, minIssueDuration, minPullEventDuration,
+        postProcessHealthMetric(repoList, maxNumCommits, maxNumContributors, minIssueDuration, minPullEventDuration,
                 maxCommPerDate, maxCommRatio);
     }
 
@@ -63,10 +65,10 @@ public class HealthMetric {
      * @param maxCommPerDate
      * @param maxCommRatio
      */
-    private static void processHealthMetric(List<Repo> repoList, Integer maxNumCommits,
-                                            Integer maxNumContributors, float minIssueDuration,
-                                            float minPullEventDuration,
-                                            float maxCommPerDate, float maxCommRatio) {
+    private static void postProcessHealthMetric(List<Repo> repoList, Integer maxNumCommits,
+                                                Integer maxNumContributors, float minIssueDuration,
+                                                float minPullEventDuration,
+                                                float maxCommPerDate, float maxCommRatio) {
         float maxIssueDurScore = 1L;
         float maxCommitScore = 1L;
         float maxContributorScore = 1L;

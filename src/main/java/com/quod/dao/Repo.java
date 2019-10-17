@@ -1,5 +1,6 @@
-package com.quod.postprocess;
+package com.quod.dao;
 
+import com.quod.mappingUtils.MappingUtility;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -80,15 +81,15 @@ public class Repo {
         this.pullEventList = pullEventList;
         this.startTime = repoStartTime;
         this.endTime = repoEndTime;
-        this.initIssueDurationData();
+        this.initIssueEventData();
         this.initPushEventData();
         this.initPullEventData();
     }
 
     /**
-     * init date related to issue event
+     * init data related to issue event
      */
-    private void initIssueDurationData() {
+    private void initIssueEventData() {
         if (!CollectionUtils.isEmpty(this.issueEventList)) {
             Integer totalOfCloseIssue = 0;
             long issueDurTotal = 0L;
@@ -188,6 +189,11 @@ public class Repo {
         return 0f;
     }
 
+    /**
+     * calculate score base on number of contributor
+     * @param maxNumContributors
+     * @return
+     */
     public float calContributorScore(Integer maxNumContributors) {
         try {
             float contributorScore = (float) this.numberOfContri / maxNumContributors;
@@ -200,6 +206,11 @@ public class Repo {
         return 0f;
     }
 
+    /**
+     * calculate score base on issue open duration
+     * @param minIssueDur
+     * @return
+     */
     public float calIssueOpenDurScore(float minIssueDur) {
         try {
             float issueDurScore = 0.0f;
@@ -217,6 +228,11 @@ public class Repo {
         return 0f;
     }
 
+    /**
+     * calculcate average pull request duration per date
+     * @param minPullEventDuration
+     * @return
+     */
     public float calAverPullRequestDurScore(float minPullEventDuration){
         try{
             float averPullRequestDurScore = 0f;
@@ -233,6 +249,11 @@ public class Repo {
 
     }
 
+    /**
+     * calculate average commit reuqest per date
+     * @param maxCommPerDate
+     * @return
+     */
     public float calAverCommPerDateScore(float maxCommPerDate){
         try{
             float averCommPerDateScore = (float) this.averNumCommPerDay / maxCommPerDate ;
@@ -246,6 +267,11 @@ public class Repo {
 
     }
 
+    /**
+     * calculate score base on commit per dev ration
+     * @param maxCommRatio
+     * @return
+     */
     public float calCommitRatioScore(float maxCommRatio){
         try {
 

@@ -1,6 +1,4 @@
-package com.quod;
-
-import com.quod.postprocess.Repo;
+package com.quod.dao;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +36,10 @@ public class FileWriterUtils {
             sb.append(',');
             sb.append("averageCommitPerDayScore");
             sb.append(',');
+            sb.append("totalCommitScore");
+            sb.append(',');
+            sb.append("totalContributorScore");
+            sb.append(',');
             sb.append("totalScore");
             sb.append('\n');
             Integer count = 1;
@@ -56,6 +58,10 @@ public class FileWriterUtils {
                 sb.append(repo.getRatioCommScore());
                 sb.append(',');
                 sb.append(repo.getAverageCommPerDayScore());
+                sb.append(',');
+                sb.append(repo.getCommitScore());
+                sb.append(',');
+                sb.append(repo.getContributorScore());
                 sb.append(',');
                 sb.append(repo.getTotalScore());
                 sb.append('\n');

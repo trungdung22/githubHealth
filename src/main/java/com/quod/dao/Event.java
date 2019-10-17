@@ -1,4 +1,4 @@
-package com.quod.postprocess;
+package com.quod.dao;
 
 import java.util.Date;
 
