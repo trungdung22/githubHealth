@@ -40,7 +40,7 @@
     </dependencies>
 
     <properties>
-        <httpclient.version>4.5.9</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
     </properties>
 
     <build>
